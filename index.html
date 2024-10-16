@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MainPage</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+
+    <div class="thirteen">
+    	<h1>Sequence Constructor</h1>
+    </div>
+    <div>
+	    <table>
+		<thead>
+		    <tr>
+		        <th>Element #</th>
+		        <th>Value</th>
+		    </tr>
+		</thead>
+		<tbody id="inputTableBody">
+		    <tr>
+		        <td>1</td>
+		        <td><input type="text" class="number-input" /></td>
+		    </tr>
+		</tbody>
+	    </table>
+	    <button id="goButton" class="button-30">Go</button>
+    </div>
+    
+    <div>
+    	<h1>Output</h1>
+	    <p>The polynomial describing your sequence:</p>
+	    <!-- describe seq here pls eg a0 = 5, a1 = 3, ...-->
+	    <p>
+		Inline: \( E = mc^2 \)
+	    </p>
+	    <p>
+		Block: 
+		\[
+		\int_0^\infty e^{-x} \, dx = 1
+		\]
+	    </p>
+    </div>
+    <script src="script.js"></script>
+
+</body>
+</html>
+
