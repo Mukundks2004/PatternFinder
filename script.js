@@ -2,6 +2,7 @@ document.getElementById('goButton').addEventListener('click', function() {
     const inputs = document.querySelectorAll('.number-input');
     const values = Array.from(inputs).map(input => input.value);
     console.log(values);
+    setAnsBox();
 });
 
 const inputTableBody = document.getElementById('inputTableBody');
@@ -35,3 +36,10 @@ function addRow() {
     inputTableBody.appendChild(newRow);
 }
 
+function setAnsBox() {
+console.log("hah");
+	const answerBox = document.getElementById("answerBox");
+	answerBox.innerHTML = "Inline: \\( E = mc^3 \\)";
+	MathJax.typeset();
+	
+}
