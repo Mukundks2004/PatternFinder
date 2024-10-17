@@ -84,7 +84,7 @@ function setAnsBox(arrayWithNaN) {
 			finalHtml += tempCoeff;
 		}
 		else {
-			if (tempCoeff === "-1" || tempCoeff === "1") {
+			if (tempCoeff === "-1" || tempCoeff === "1" || tempCoeff === "+1") {
 				tempCoeff = tempCoeff.slice(0, -1);
 			}
 	
