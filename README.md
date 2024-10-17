@@ -27,17 +27,17 @@ Lagrange interpolation is a polynomial interpolation method used to find a polyn
 
 Just enter the sequence as you know it, and make up the numbers you want to extend it however you want. Press "go" to calculate and "clear" to clear. See screenshots below.
 
-[geogebra](geogebra.png)
-[ss](sample_polynomial.png)
+![geogebra](geogebra.png)
+![ss](sample_polynomial.png)
 
 ## Introduction
 Lagrange interpolation provides a method for estimating the value of a function at a given point using a polynomial that passes through a specific set of data points. This technique is widely used in numerical analysis, computer graphics, and various fields of engineering.
 
 ## Steps to Perform Lagrange Interpolation
-1. Identify Data Points: Gather the \( n \) data points \( (x_0, y_0), (x_1, y_1), \ldots, (x_{n-1}, y_{n-1}) \).
-2. Construct Basis Polynomials: Calculate each Lagrange basis polynomial \( L_k(x) \) for \( k = 0, 1, \ldots, n-1 \).
-3. Form the Interpolating Polynomial: Combine the basis polynomials using the Lagrange interpolation formula.
-4. Evaluate the Polynomial: Use \( P(x) \) to estimate function values at desired points.
+1. Identify Data Points: Gather the \( n \) data points
+2. Construct Basis Polynomials: Calculate each Lagrange basis polynomial
+3. Form the Interpolating Polynomial: Combine the basis polynomials using the Lagrange interpolation formula
+4. Evaluate the Polynomial: Use \( P(x) \) to estimate function values at desired points
 
 ## Example
 Given the points \( (1, 2), (2, 3), (3, 5) \):
@@ -62,7 +62,7 @@ Given the points \( (1, 2), (2, 3), (3, 5) \):
 # Thank you!
 For reading! Now you too can be a nerd.
 
-[nerd](erm.jpg)
+![nerd](erm.jpg)
 
 ## TODO:
 - Implement fraction class to get strict answers
