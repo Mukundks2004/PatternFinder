@@ -3,11 +3,11 @@
 
 Welcome to the Pattern Finder tool, also known as the Lagrange Interpolation Widget, or as I like to call it, the "erm, actually" tool!
 
-[logo](favicon.ico)
+![logo](favicon.ico)
 
 Picture this. It's a warm sunny summer day. You're kicking back in maths class, last period, and doodling, while your stupid classmates all rush to complete their homework (the studious bastards) when all of a sudden, your teacher announces a puzzle! Your ears perk up and you sit up straight in your chair. A challenge! However, the next few words that leave the teacher's mouth leaves you shuddering. It's a complete the sequence challenge, the worst type of challenge. She waddles over to the board, picks up a marker and starts scrawling. One, two, four, seven numbers in the sequence. "What comes next?" she poses it to the class. What bullshit, it's clear she did not pay attention during her real analysis class. It's a trivial consequence of the fundamental theorem of algebra that for any finite $n$ number of points there exists infinitely many polynomials of unrestricted degree passing through those points. Each of these qualifies as a legitimate "pattern" reducing your teacher's vacuous vapid query of profound bewilderment that dances on the precipice of absurdity to nothing. These fools won't be satisfied with a proof. They'll want to see the polynomial! Well look no further, as this tool does the brunt of the work for you.
 
-[nerd](polynom.jpg)
+![nerd](polynom.jpg)
 
 
 
@@ -17,8 +17,6 @@ Lagrange interpolation is a polynomial interpolation method used to find a polyn
 
 ## Table of Contents
 - [Introduction](#introduction)
-- [Lagrange Basis Polynomials](#lagrange-basis-polynomials)
-- [Lagrange Interpolation Formula](#lagrange-interpolation-formula)
 - [Steps to Perform Lagrange Interpolation](#steps-to-perform-lagrange-interpolation)
 - [Example](#example)
 - [Properties](#properties)
@@ -34,24 +32,6 @@ Just enter the sequence as you know it, and make up the numbers you want to exte
 
 ## Introduction
 Lagrange interpolation provides a method for estimating the value of a function at a given point using a polynomial that passes through a specific set of data points. This technique is widely used in numerical analysis, computer graphics, and various fields of engineering.
-
-## Lagrange Basis Polynomials
-The Lagrange basis polynomials \( L_k(x) \) are defined for each data point \( (x_k, y_k) \) as follows:
-
-\[
-L_k(x) = \prod_{\substack{0 \leq j < n \\ j \neq k}} \frac{x - x_j}{x_k - x_j}
-\]
-
-Here, \( n \) is the number of data points, and \( k \) indexes the specific data point.
-
-## Lagrange Interpolation Formula
-The Lagrange interpolation polynomial \( P(x) \) is given by the sum of the Lagrange basis polynomials multiplied by their corresponding function values:
-
-\[
-P(x) = \sum_{k=0}^{n-1} y_k L_k(x)
-\]
-
-where \( y_k \) is the function value at \( x_k \).
 
 ## Steps to Perform Lagrange Interpolation
 1. Identify Data Points: Gather the \( n \) data points \( (x_0, y_0), (x_1, y_1), \ldots, (x_{n-1}, y_{n-1}) \).
