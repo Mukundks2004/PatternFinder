@@ -1,7 +1,8 @@
+import { Fraction } from "./Fraction.js";
+
 document.getElementById('goButton').addEventListener('click', function() {
     const inputs = document.querySelectorAll('.number-input');
     const values = Array.from(inputs).map(input => parseInt(input.value));
-    console.log(values);
     setAnsBox(values);
 });
 
@@ -10,15 +11,25 @@ const inputTableBody = document.getElementById('inputTableBody');
 inputTableBody.addEventListener('input', function(event) {
     if (event.target.classList.contains('number-input')) {
         const value = event.target.value;
+		//Allow negatives and decimals lol
         if (!/^\d*$/.test(value)) {
             event.target.value = value.replace(/[^\d]/g, '');
         }
-	console.log(value);
         if (event.target.value.length !== 0 && !event.target.parentElement.parentElement.nextElementSibling) {
             addRow();
         }
     }
 });
+
+document.getElementById('clsButton').addEventListener('click', function() {
+    inputTableBody.innerHTML = "";
+	const answerBox = document.getElementById("answerBox");
+
+	answerBox.innerHTML = "";
+
+	addRow();
+});
+
 
 function addRow() {
     const newRow = document.createElement('tr');
@@ -40,17 +51,78 @@ function setAnsBox(arrayWithNaN) {
 	const answerBox = document.getElementById("answerBox");
 	answerBox.style.display = "block";
 	const filteredArray = arrayWithNaN.filter(value => !isNaN(value));
-	
-	let result = lagrangeInterpolation(Array.from({length: filteredArray.length}, (_, i) => i + 1), filteredArray);
-	let finalHtml = "\\( ";
+	const fractionedArray = filteredArray.map(num => new Fraction(num, 1));
+	let futureXList = Array.from({length: filteredArray.length}, (_, i) => new Fraction(i + 1, 1));
+	let result = lagrangeInterpolation(futureXList, fractionedArray);
+
+	if (result.length === 0) {
+		answerBox.innerHTML = "Add some data!"
+		return;
+	}
+
+	//Make the visuals better
+	let finalHtml = "\\( f(x) = ";
 	let count = filteredArray.length - 1;
+	let firstTermHasBeenAdded = false;
 	for (let coeff of result) {
-		finalHtml += "+ " + coeff + "*x^" + count.toString();
+		//console.log(count, coeff);
+		if (filteredArray.length === 1) {
+			finalHtml += formatFraction(coeff.num, coeff.denom, true);
+			continue;
+		}
+
+		if (coeff.isZero()) {
+			
+			count--;
+			continue;
+		}
+
+		let tempCoeff = formatFraction(coeff.num, coeff.denom, !firstTermHasBeenAdded);
+
+		if (count === 0) {
+			//We would normally invert first term here but we're done soo
+			finalHtml += tempCoeff;
+		}
+		else {
+			if (tempCoeff === "-1" || tempCoeff === "1") {
+				tempCoeff = tempCoeff.slice(0, -1);
+			}
+	
+			if (count === 1) {
+				finalHtml += tempCoeff + "x";
+			}
+	
+			else {
+				finalHtml += tempCoeff + "x^" + count.toString();
+			}
+			firstTermHasBeenAdded = true;
+		}
+
 		count--;
 	}
 	finalHtml += "\\)";
 	answerBox.innerHTML = finalHtml;
 	MathJax.typeset();
+}
+
+function formatFraction(num, denom, isFirst) {
+    //non fracs
+	if (denom === 1) {
+		if (num <= 0 || isFirst) {
+			return num.toString();
+		}
+		return "+" + num.toString();
+	}
+	//fracs
+	if (num < 0) {
+		return "- \\frac{" + num * -1 + "}{" + denom + "}";
+	}
+	if (isFirst) {
+		return "\\frac{" + num + "}{" + denom + "}";
+	}
+	else {
+		return "+ \\frac{" + num + "}{" + denom + "}";
+	}
 }
 
 //If u provide same point twice this breaks, but i think we cant ever do that
@@ -59,22 +131,23 @@ function lagrangeInterpolation(xList, yList) {
 	const totalNodes = xList.length;
 	//Second step: get the list of barycentric weights
 	
-	let bWeights = new Array(totalNodes).fill(1);
+	let bWeights = new Array(totalNodes);
+	for (let c = 0; c < totalNodes; c++) {
+		bWeights[c] = new Fraction(1, 1);
+	}
+
 	for (let i = 0; i < totalNodes; i++) {
 		//Fix current element
-		let currentCoeff = xList[i];
 		for (let j = 0; j < totalNodes; j++) {
 		
 			if (i === j) {
 				continue;
 			}
-			//console.log(i, xList[i], j);
 			//j must not be i, for every combination multiply
-			bWeights[i] *= (1/(xList[i] - xList[j]))
-			//console.log(bWeights);
+			bWeights[i] = bWeights[i].times((xList[i].minus(xList[j])).reciprocal());
 		}
 	}
-	
+
 	//Now we have the weights w0, w1, w2 = [0.5, -1, 0.5]
 	//Now we want to get each linear factor except 1, for all combinations, multiply them
 	//and multiply by weight
@@ -85,35 +158,13 @@ function lagrangeInterpolation(xList, yList) {
 	let basisPolynomials = [];
 	for (let i = 0; i < totalNodes; i++) {
 		strictList = excludeIndex(xList, i);
-		//console.log(strictList);
 		basisPolyWithoutWeight = polynomialFromFactors(strictList);
-		basisPolyWeighted = basisPolyWithoutWeight.map(num => num * bWeights[i] * yList[i]);
+		basisPolyWeighted = basisPolyWithoutWeight.map(num => num.times(bWeights[i]).times(yList[i]));
 		basisPolynomials.push(basisPolyWeighted);
 	}
 	
-	console.log("-----------");
-	console.log(basisPolynomials);
-	
 	let sol = sum2DArray(basisPolynomials);
 	return sol;
-	
-	
-	/*
-	let completeL = new Array(totalNodes).fill(0);
-	let basisPolynomials = [];
-	for (let basisPolynomialIndex = 0; basisPolynomialIndex < totalNodes; basisPolynomialIndex++) {
-		for (let coeffIndex = 0; coeffIndex < totalNodes; coeffIndex++) {
-			completeL[coeffIndex] += basisPolynomials[basisPolynomialIndex][coeffIndex];
-		}
-	}
-	
-	console.log(bWeights);*/
-	
-}
-
-function multiplyLinearsGetCoeffs(zeroesList) {
-	//Takes [1, 2, -3] representing (x-1)(x-2)(x-3) and returns 1, -6, 11, -6 or whatever
-	//Account for potential sign mismatch
 }
 
 function excludeIndex(arr, n) {
@@ -121,22 +172,18 @@ function excludeIndex(arr, n) {
 }
 
 //I hope this works lol
+//Potential to save time here if we know it is a fraction etc haha u idiot
 function polynomialFromFactors(factors) {
-    // Start with the constant polynomial [1] (which is 1)
-    let coefficients = [1];
+    let coefficients = [new Fraction(1, 1)];
 
-    // Multiply each factor (x - root) into the polynomial
     for (const root of factors) {
-        // Create a new array to hold the new coefficients
-        const newCoefficients = new Array(coefficients.length + 1).fill(0);
+		const newCoefficients = new Array(coefficients.length + 1).fill(new Fraction(0, 1));
         
-        // Multiply the current polynomial by (x - root)
         for (let i = 0; i < coefficients.length; i++) {
-            newCoefficients[i] += coefficients[i]; // x^i term
-            newCoefficients[i + 1] += coefficients[i] * -root; // x^(i+1) term
+            newCoefficients[i] = newCoefficients[i].plus(coefficients[i]); // x^i term
+            newCoefficients[i + 1] = newCoefficients[i+1].plus(coefficients[i].times(root.times(new Fraction(-1, 1)))); // x^(i+1) term
         }
 
-        // Update the coefficients to the new polynomial
         coefficients = newCoefficients;
     }
 
@@ -145,24 +192,16 @@ function polynomialFromFactors(factors) {
 
 function sum2DArray(arr) {
     if (arr.length === 0) return [];
+    const result = new Array(arr[0].length).fill(new Fraction(0, 1)); // Initialize result array with zeros
 
-    return arr[0].map((_, index) => {
-        return arr.reduce((sum, innerArray) => sum + innerArray[index], 0);
-    });
+    for (let i = 0; i < arr.length; i++) {
+        for (let j = 0; j < arr[i].length; j++) {
+            result[j] = result[j].plus(arr[i][j]); // Use add to accumulate sums
+        }
+    }
+
+    return result;
 }
-
-
-
-/*
-const array2D = [
-    [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-    [0, 0, 0, 0, 1, 1, 1, 1, 10, 10]
-];
-
-const summedArray = sum2DArray(array2D);
-console.log(summedArray); // Output: [12, 15, 18]
-*/
-
 
 
 
